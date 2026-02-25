@@ -1,0 +1,24 @@
+id,location,latitude,longitude,status,current_capacity_percentage,type
+1,Salt Lake Sector V Hub,22.5867,88.4170,Active,45,Recycler
+2,New Town Action Area I,22.5673,88.4410,Active,20,Collection Point
+3,Eco Park Collection Point,22.6186,88.4654,Active,98,Smart Bin
+4,Chinar Park Dropoff,22.6253,88.4485,Active,15,Recycler
+5,Jadavpur University Campus,22.4992,88.3709,Active,30,Smart Bin
+6,Park Street Center,22.5477,88.3523,Active,65,Collection Point
+7,Howrah Station Hub,22.5830,88.3433,Active,40,Recycler
+8,Kolkata Airport (CCU),22.6547,88.4467,Active,12,Recycler
+9,Gariahat Market Point,22.5186,88.3664,Active,80,Smart Bin
+10,Shyambazar Five-Point,22.6044,88.3764,Active,55,Collection Point
+11,Tollygunge Metro Hub,22.4947,88.3444,Active,25,Recycler
+12,Behala Tram Depot,22.5020,88.3184,Active,90,Smart Bin
+13,College Street (Boipara),22.5744,88.3639,Active,35,Collection Point
+14,Alipore Zoo Entrance,22.5369,88.3315,Active,10,Smart Bin
+15,Princep Ghat Center,22.5540,88.3281,Active,22,Collection Point
+16,Victoria Memorial Hub,22.5448,88.3426,Active,48,Recycler
+17,Ballygunge Phari Point,22.5280,88.3655,Active,72,Smart Bin
+18,Dum Dum Station North,22.6217,88.3934,Active,15,Collection Point
+19,Sealdah Station Plaza,22.5670,88.3710,Active,88,Recycler
+20,Tangra Chinatown Hub,22.5471,88.3904,Active,5,Collection Point
+21,Kasba Industrial Estate,22.5144,88.3930,Active,60,Recycler
+22,Lake Town Clock Tower,22.6015,88.4010,Active,42,Smart Bin
+23,Barrackpore Trunk Rd,22.6420,88.3810,Active,30,Collection Point

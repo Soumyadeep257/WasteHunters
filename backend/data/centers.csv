@@ -1,0 +1,5 @@
+center_id,name,location,current_capacity_kg,is_active
+1,Green Earth E-Waste,Downtown,500.5,true
+2,TechRecycle Hub,Northside,1200.0,true
+3,SafeDispose Center,West End,50.0,false
+4,New Town E-Waste,New Town,100.0,true

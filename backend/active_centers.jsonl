@@ -1,0 +1,23 @@
+{"id": "1", "location": "Salt Lake Sector V Hub", "latitude": "22.5867", "longitude": "88.4170", "status": "Active", "current_capacity_percentage": "45", "type": "Recycler"}
+{"id": "2", "location": "New Town Action Area I", "latitude": "22.5673", "longitude": "88.4410", "status": "Active", "current_capacity_percentage": "20", "type": "Collection Point"}
+{"id": "3", "location": "Eco Park Collection Point", "latitude": "22.6186", "longitude": "88.4654", "status": "Active", "current_capacity_percentage": "98", "type": "Smart Bin"}
+{"id": "4", "location": "Chinar Park Dropoff", "latitude": "22.6253", "longitude": "88.4485", "status": "Active", "current_capacity_percentage": "15", "type": "Recycler"}
+{"id": "5", "location": "Jadavpur University Campus", "latitude": "22.4992", "longitude": "88.3709", "status": "Active", "current_capacity_percentage": "30", "type": "Smart Bin"}
+{"id": "6", "location": "Park Street Center", "latitude": "22.5477", "longitude": "88.3523", "status": "Active", "current_capacity_percentage": "65", "type": "Collection Point"}
+{"id": "7", "location": "Howrah Station Hub", "latitude": "22.5830", "longitude": "88.3433", "status": "Active", "current_capacity_percentage": "40", "type": "Recycler"}
+{"id": "8", "location": "Kolkata Airport (CCU)", "latitude": "22.6547", "longitude": "88.4467", "status": "Active", "current_capacity_percentage": "12", "type": "Recycler"}
+{"id": "9", "location": "Gariahat Market Point", "latitude": "22.5186", "longitude": "88.3664", "status": "Active", "current_capacity_percentage": "80", "type": "Smart Bin"}
+{"id": "10", "location": "Shyambazar Five-Point", "latitude": "22.6044", "longitude": "88.3764", "status": "Active", "current_capacity_percentage": "55", "type": "Collection Point"}
+{"id": "11", "location": "Tollygunge Metro Hub", "latitude": "22.4947", "longitude": "88.3444", "status": "Active", "current_capacity_percentage": "25", "type": "Recycler"}
+{"id": "12", "location": "Behala Tram Depot", "latitude": "22.5020", "longitude": "88.3184", "status": "Active", "current_capacity_percentage": "90", "type": "Smart Bin"}
+{"id": "13", "location": "College Street (Boipara)", "latitude": "22.5744", "longitude": "88.3639", "status": "Active", "current_capacity_percentage": "35", "type": "Collection Point"}
+{"id": "14", "location": "Alipore Zoo Entrance", "latitude": "22.5369", "longitude": "88.3315", "status": "Active", "current_capacity_percentage": "10", "type": "Smart Bin"}
+{"id": "15", "location": "Princep Ghat Center", "latitude": "22.5540", "longitude": "88.3281", "status": "Active", "current_capacity_percentage": "22", "type": "Collection Point"}
+{"id": "16", "location": "Victoria Memorial Hub", "latitude": "22.5448", "longitude": "88.3426", "status": "Active", "current_capacity_percentage": "48", "type": "Recycler"}
+{"id": "17", "location": "Ballygunge Phari Point", "latitude": "22.5280", "longitude": "88.3655", "status": "Active", "current_capacity_percentage": "72", "type": "Smart Bin"}
+{"id": "18", "location": "Dum Dum Station North", "latitude": "22.6217", "longitude": "88.3934", "status": "Active", "current_capacity_percentage": "15", "type": "Collection Point"}
+{"id": "19", "location": "Sealdah Station Plaza", "latitude": "22.5670", "longitude": "88.3710", "status": "Active", "current_capacity_percentage": "88", "type": "Recycler"}
+{"id": "20", "location": "Tangra Chinatown Hub", "latitude": "22.5471", "longitude": "88.3904", "status": "Active", "current_capacity_percentage": "5", "type": "Collection Point"}
+{"id": "21", "location": "Kasba Industrial Estate", "latitude": "22.5144", "longitude": "88.3930", "status": "Active", "current_capacity_percentage": "60", "type": "Recycler"}
+{"id": "22", "location": "Lake Town Clock Tower", "latitude": "22.6015", "longitude": "88.4010", "status": "Active", "current_capacity_percentage": "42", "type": "Smart Bin"}
+{"id": "23", "location": "Barrackpore Trunk Rd", "latitude": "22.6420", "longitude": "88.3810", "status": "Active", "current_capacity_percentage": "30", "type": "Collection Point"}

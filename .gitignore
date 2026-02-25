@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -22,3 +23,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+# Ignore Backend Secrets & Database
+backend/.env
+backend/wastehunters.db
+backend/__pycache__/
+backend/venv/
+
+# Ignore Frontend Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+>>>>>>> d9a64da (Final Secure Update: Moved gitignore to root and updated Gemini models)
