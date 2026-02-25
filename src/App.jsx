@@ -12,6 +12,7 @@ import EducationPage from './features/education/EducationPage';
 import ProfilePage from './features/profile/ProfilePage';
 import CampaignsPage from './features/community/CampaignsPage';
 
+
 function App() {
   return (
     <Router>
