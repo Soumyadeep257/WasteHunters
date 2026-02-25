@@ -1,12 +1,12 @@
 # 🌿 WasteHunters: AI E-Waste Recycling Portal
 
-**WasteHunters** is a high-fidelity, real-time **"Green-Tech"** dashboard designed to gamify e-waste disposal and environmental education. Built for the **Hack for Green Bharat** hackathon, it leverages AI to classify electronic waste and provides a localized ecosystem for recycling in Kolkata.
+**WasteHunters** is a high-fidelity, real-time **"Green-Tech"** platform designed to gamify e-waste disposal and environmental education, it leverages AI to classify electronic waste and provides a localized ecosystem for recycling in Kolkata as well as India.
 
 ---
 
 ### 🚀 Core Features
 
-* [cite_start]**AI Hunter Tool**: Capture or upload photos of electronic devices for instant identification and hazardous material detection using Gemini-powered AI[cite: 77, 79].
+* **AI Hunter Tool**: Capture or upload photos of electronic devices for instant identification and hazardous material detection using Gemini-powered AI.
 * **Real-Time Impact Dashboard**: Visualize recycling progress (currently **120.2 kg**) and carbon footprint savings (**45.5 kg**) through dynamic, interactive charts.
     
 * **Pathway Live Feed**: A dedicated ticker showing real-time network updates, such as new pickups in **Sector V** or processing alerts.
@@ -30,7 +30,7 @@
 ---
 
 ### 📍 Localized Impact: Kolkata
-The platform is currently optimized for users in **Salt Lake, Sector V, and New Town, Kolkata**. Verified Hunters like **Aditya Roy** can track their personal contributions, earn "Carbon Zero Hero" badges, and view localized recycling history from centers like the **Eco Park Collection Point**.
+The platform is currently optimized for users in **Salt Lake, Sector V, and New Town, Kolkata**. Verified Hunters can track their personal contributions, earn "Carbon Zero Hero" badges, and view localized recycling history from centers like the **Eco Park Collection Point**.
 
 ---
 
@@ -38,5 +38,5 @@ The platform is currently optimized for users in **Salt Lake, Sector V, and New 
 
 **1. Clone the repository:**
 ```bash
-git clone [https://github.com/Soumyadeep257/WasteHunters.git](https://github.com/Soumyadeep257/WasteHunters.git)
-cd WasteHunters/frontend
+git clone https://github.com/Soumyadeep257/WasteHunters.git
+cd WasteHunters
