@@ -9,7 +9,8 @@ import HunterPage from './features/hunter/HunterPage';
 import MapPage from './features/map/MapPage';
 import RewardsPage from './features/rewards/RewardsPage';
 import EducationPage from './features/education/EducationPage';
-import ProfilePage from './features/profile/ProfilePage'; // <--- Import this
+import ProfilePage from './features/profile/ProfilePage';
+import CampaignsPage from './features/community/CampaignsPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/rewards" element={<RewardsPage />} />
               <Route path="/education" element={<EducationPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/community" element={<CampaignsPage />} />
               
               <Route path="/settings" element={<div className="p-8">Settings Page Coming Soon</div>} />
             </Routes>
