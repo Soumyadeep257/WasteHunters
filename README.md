@@ -1,61 +1,42 @@
-🌿 WasteHunters: AI E-Waste Recycling Portal
-WasteHunters is a high-fidelity, real-time "Green-Tech" dashboard designed to gamify e-waste disposal and education. Built for the Hack for Green Bharat hackathon, it leverages AI to classify electronic waste and provides a localized ecosystem for recycling in Kolkata.
-+4
+# 🌿 WasteHunters: AI E-Waste Recycling Portal
 
-🚀 Core Features
+**WasteHunters** is a high-fidelity, real-time **"Green-Tech"** dashboard designed to gamify e-waste disposal and environmental education. Built for the **Hack for Green Bharat** hackathon, it leverages AI to classify electronic waste and provides a localized ecosystem for recycling in Kolkata.
 
-AI Hunter Tool: Capture or upload photos of electronic devices for instant identification and hazardous material detection using AI.
-+3
+---
 
+### 🚀 Core Features
 
-Real-Time Impact Dashboard: Visualize recycling progress and carbon footprint savings through dynamic, interactive charts.
-+1
+* [cite_start]**AI Hunter Tool**: Capture or upload photos of electronic devices for instant identification and hazardous material detection using Gemini-powered AI[cite: 77, 79].
+* **Real-Time Impact Dashboard**: Visualize recycling progress (currently **120.2 kg**) and carbon footprint savings (**45.5 kg**) through dynamic, interactive charts.
+    
+* **Pathway Live Feed**: A dedicated ticker showing real-time network updates, such as new pickups in **Sector V** or processing alerts.
+* **Interactive Live Map**: Locate nearby recycling centers in Kolkata, such as the **Carbon Guard Station** or **TechSafe Hub**, with live status indicators like "Optimal" or "Full".
+* **Gamified Rewards Store**: Earn tokens (current balance: **1,250**) for every successful recycle and redeem them for INR-based vouchers like **Amazon Pay ₹500** and eco-friendly gadgets.
+* **Educational Hub**: Interactive modules on the safe disposal of **PCBs**, **Batteries**, and **Screens** to earn bonus tokens while learning.
 
+---
 
-Pathway Live Feed: A dedicated ticker showing real-time network updates like pickups and processed waste.
-+2
+### 🛠️ Tech Stack
 
+| Component | Technology |
+| :--- | :--- |
+| **Frontend** | React.js (Vite-based) |
+| **Styling** | Tailwind CSS v4 (Emerald Green & Charcoal palette) |
+| **Icons** | Lucide React |
+| **Visualizations** | Recharts |
+| **Routing** | React Router DOM |
+| **AI Logic** | Simulated Gemini-powered classification |
 
-Interactive Live Map: Locate nearby recycling centers in Kolkata with live status indicators (Optimal vs. Full).
-+2
+---
 
+### 📍 Localized Impact: Kolkata
+The platform is currently optimized for users in **Salt Lake, Sector V, and New Town, Kolkata**. Verified Hunters like **Aditya Roy** can track their personal contributions, earn "Carbon Zero Hero" badges, and view localized recycling history from centers like the **Eco Park Collection Point**.
 
-Gamified Rewards Store: Earn tokens for every successful recycle and redeem them for INR-based vouchers (Amazon Pay) and eco-friendly gadgets.
-+4
+---
 
+### 🏃 Getting Started
 
-Educational Hub: Interactive modules on safe disposal of PCBs, batteries, and screens to earn bonus tokens.
-+4
-
-🛠️ Tech Stack
-
-Frontend: React.js (Vite-based).
-+1
-
-Styling: Tailwind CSS v4 (Custom "Green-Tech" palette: Emerald Green & Charcoal).
-
-Icons: Lucide React.
-
-
-Visualizations: Recharts.
-
-Routing: React Router DOM.
-
-
-AI Logic: Simulated Gemini-powered classification.
-+2
-
-🏃 Getting Started
-Clone the repository:
-
-Bash
-git clone https://github.com/YOUR_USERNAME/WasteHunters.git
+**1. Clone the repository:**
+```bash
+git clone [https://github.com/Soumyadeep257/WasteHunters.git](https://github.com/Soumyadeep257/WasteHunters.git)
 cd WasteHunters/frontend
-Install dependencies:
-
-Bash
-npm install
-Run the development server:
-
-Bash
-npm run dev
