@@ -10,14 +10,16 @@ const data = [
   { name: 'Jun', recycled: 100, carbon: 85 },
 ];
 
-const ImpactStats = () => {
+// NEW: Accept totalKg as a prop
+const ImpactStats = ({ totalKg }) => {
   return (
-    <div className="w-full h-87.5 bg-dark-800 rounded-2xl p-6 border border-dark-700 shadow-xl flex flex-col">
+    <div className="w-full h-[350px] bg-dark-800 rounded-2xl p-6 border border-dark-700 shadow-xl flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <div>
             <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider">Environmental Impact</h3>
             <div className="flex items-baseline gap-2">
-                <p className="text-2xl font-bold text-white mt-1">120.2 kg</p>
+                {/* DYNAMIC: Display actual calculated kg here */}
+                <p className="text-2xl font-bold text-white mt-1">{totalKg} kg</p>
                 <span className="text-waste-500 text-sm">Recycled</span>
             </div>
         </div>

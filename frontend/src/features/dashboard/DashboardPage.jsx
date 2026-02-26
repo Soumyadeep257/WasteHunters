@@ -1,9 +1,50 @@
-import React from 'react';
-import { Zap, ArrowUpRight } from 'lucide-react';
-import ImpactStats from './components/ImpactStats';
+import React, { useState, useEffect } from 'react';
+import { Zap, ArrowUpRight, Loader2 } from 'lucide-react';
+
+// FIXED: Added '/components/' to the import paths
+import ImpactStats from './components/ImpactStats'; 
 import LiveFeedTicker from './components/LiveFeedTicker';
 
 const DashboardPage = () => {
+  const [stats, setStats] = useState({ tokens: 0, events: 0 });
+  const [centerCount, setCenterCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch all required dashboard data in parallel
+    const fetchDashboardData = async () => {
+      try {
+        const [statsRes, centersRes] = await Promise.all([
+          fetch('http://127.0.0.1:8000/api/user-stats'),
+          fetch('http://127.0.0.1:8000/api/centers')
+        ]);
+
+        if (statsRes.ok) setStats(await statsRes.json());
+        if (centersRes.ok) {
+          const centersData = await centersRes.json();
+          setCenterCount(centersData.length);
+        }
+      } catch (error) {
+        console.error("Failed to load dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Calculate a dynamic "kg processed" metric based on recycling events (e.g., 15kg per event)
+  const totalKg = (stats.events * 15.5).toFixed(1);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[50vh]">
+        <Loader2 className="w-10 h-10 text-waste-500 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
       {/* Page Header */}
@@ -13,8 +54,11 @@ const DashboardPage = () => {
           <p className="text-gray-400 mt-1">Real-time overview of recycling operations.</p>
         </div>
         
-        {/* Quick Action Button */}
-        <button className="bg-waste-500 hover:bg-waste-600 text-dark-900 font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 transition-all hover:shadow-[0_0_20px_-5px_#10b981]">
+        {/* Quick Action Button - Routes to Hunter Tool */}
+        <button 
+          onClick={() => window.location.href = '/hunter'} 
+          className="bg-waste-500 hover:bg-waste-600 text-dark-900 font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 transition-all hover:shadow-[0_0_20px_-5px_#10b981]"
+        >
           <Zap className="w-4 h-4 fill-current" />
           <span>Quick Scan</span>
         </button>
@@ -23,22 +67,23 @@ const DashboardPage = () => {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Left Column: Impact Graph & Stats (Spans 2 columns) */}
+        {/* Left Column: Impact Graph & Stats */}
         <div className="lg:col-span-2 space-y-6">
-          <ImpactStats />
+          {/* Pass dynamic kg down to the chart component */}
+          <ImpactStats totalKg={totalKg} />
           
           {/* Quick Stats Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-dark-800 p-5 rounded-2xl border border-dark-700">
                 <div className="text-gray-400 text-xs uppercase font-bold mb-2">Total Processed</div>
                 <div className="text-2xl font-bold text-white flex items-end gap-2">
-                    1,240 kg <span className="text-waste-500 text-xs mb-1 flex items-center bg-waste-500/10 px-1.5 py-0.5 rounded">+12% <ArrowUpRight className="w-3 h-3 ml-0.5"/></span>
+                    {totalKg} kg <span className="text-waste-500 text-xs mb-1 flex items-center bg-waste-500/10 px-1.5 py-0.5 rounded">+12% <ArrowUpRight className="w-3 h-3 ml-0.5"/></span>
                 </div>
             </div>
             <div className="bg-dark-800 p-5 rounded-2xl border border-dark-700">
                 <div className="text-gray-400 text-xs uppercase font-bold mb-2">Active Centers</div>
                 <div className="text-2xl font-bold text-white">
-                    8 <span className="text-gray-500 text-sm font-normal">/ 12</span>
+                    {centerCount} <span className="text-gray-500 text-sm font-normal">/ 12</span>
                 </div>
             </div>
              <div className="bg-dark-800 p-5 rounded-2xl border border-dark-700 hidden md:block">

@@ -7,26 +7,37 @@ const Header = () => {
   const location = useLocation(); // To trigger a refresh when we move pages
   const [showNotifications, setShowNotifications] = useState(false);
   
-  // LIVE USER DATA STATE
-  const [userData, setUserData] = useState({ name: "Aditya", tokens: 0 });
+  // LIVE USER DATA STATE - Set a default fallback name
+  const [userData, setUserData] = useState({ name: "Arka", tokens: 0 });
 
-  // FETCH REAL DATA FROM BACKEND
+  // FETCH REAL DATA FROM BACKEND & LOCALSTORAGE
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchStatsAndProfile = async () => {
       try {
+        // 1. Fetch live tokens from backend
         const response = await fetch('http://127.0.0.1:8000/api/user-stats');
         const data = await response.json();
-        // Update state with live database values
-        setUserData({ name: "Aditya", tokens: data.tokens });
+        
+        // 2. Fetch the dynamic name from LocalStorage
+        let currentName = "Arka"; // Fallback
+        const savedProfile = localStorage.getItem('wastehunters_profile');
+        if (savedProfile) {
+          const parsedProfile = JSON.parse(savedProfile);
+          // Get just the first name (e.g., "Arkaprava" -> "Arkaprava")
+          currentName = parsedProfile.name.split(' ')[0]; 
+        }
+
+        // 3. Update state with both live database values AND local profile name
+        setUserData({ name: currentName, tokens: data.tokens });
       } catch (error) {
-        console.error("Could not fetch live tokens:", error);
+        console.error("Could not fetch live data:", error);
       }
     };
 
-    fetchStats();
+    fetchStatsAndProfile();
     
     // Check every 5 seconds or whenever the user changes pages
-    const interval = setInterval(fetchStats, 5000);
+    const interval = setInterval(fetchStatsAndProfile, 5000);
     return () => clearInterval(interval);
   }, [location]);
 

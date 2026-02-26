@@ -1,24 +1,10 @@
 import React, { useState } from 'react';
 import { PlayCircle, BookOpen, X, CheckCircle, HelpCircle } from 'lucide-react';
 
-const ModuleCard = ({ title, desc, videoUrl, reward, level, duration }) => {
+const ModuleCard = ({ title, category, desc, videoUrl, quizData, reward, level, duration }) => {
   const [showModal, setShowModal] = useState(false);
   const [quizStep, setQuizStep] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
-
-  // Custom Quiz Questions based on E-Waste
-  const questions = [
-    {
-      q: "Which hazardous heavy metal is commonly found in old CRT monitors?",
-      options: ["Lead", "Iron", "Aluminum"],
-      correct: "Lead"
-    },
-    {
-      q: "What is the best way to dispose of a swollen Lithium-ion battery?",
-      options: ["Throw in trash", "Specialized e-waste center", "Burn it"],
-      correct: "Specialized e-waste center"
-    }
-  ];
 
   const handleClaim = async () => {
     const res = await fetch('http://127.0.0.1:8000/api/claim-tokens', {
@@ -33,11 +19,16 @@ const ModuleCard = ({ title, desc, videoUrl, reward, level, duration }) => {
     }
   };
 
+  // Determine Category Color
+  const catColor = category === "E-Waste" ? "text-purple-400 bg-purple-400/10" 
+                 : category === "Plastic" ? "text-blue-400 bg-blue-400/10"
+                 : "text-green-400 bg-green-400/10";
+
   return (
     <>
       <div onClick={() => !isCompleted && setShowModal(true)} className="bg-dark-800 p-6 rounded-2xl border border-dark-700 hover:border-waste-500 cursor-pointer transition-all h-full flex flex-col shadow-lg hover:shadow-waste-500/10">
         <div className="flex justify-between mb-4">
-          <span className="text-xs font-bold text-blue-400 bg-blue-400/10 px-2 py-1 rounded">{level}</span>
+          <span className={`text-xs font-bold px-2 py-1 rounded ${catColor}`}>{category} | {level}</span>
           <span className="text-waste-500 font-bold text-xs">+{reward} Tokens</span>
         </div>
         <h3 className="text-white font-bold mb-2">{title}</h3>
@@ -47,7 +38,7 @@ const ModuleCard = ({ title, desc, videoUrl, reward, level, duration }) => {
         </button>
       </div>
 
-      {showModal && (
+      {showModal && quizData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
           <div className="bg-dark-900 border border-dark-700 w-full max-w-2xl rounded-3xl overflow-hidden p-8 space-y-6 shadow-2xl animate-in zoom-in-95">
             <div className="flex justify-between items-center text-white">
@@ -56,7 +47,6 @@ const ModuleCard = ({ title, desc, videoUrl, reward, level, duration }) => {
             </div>
             
             <div className="aspect-video rounded-xl overflow-hidden border border-dark-700 shadow-inner bg-black">
-              {/* UPDATED IFRAME WITH FULL PERMISSIONS */}
               <iframe 
                 width="100%" 
                 height="100%" 
@@ -75,14 +65,14 @@ const ModuleCard = ({ title, desc, videoUrl, reward, level, duration }) => {
                 <span className="text-sm font-bold uppercase tracking-widest">Knowledge Check</span>
               </div>
               
-              <p className="text-white font-medium mb-4">{questions[quizStep % 2].q}</p>
+              <p className="text-white font-medium mb-4">{quizData[quizStep % quizData.length].q}</p>
               
               <div className="grid grid-cols-1 gap-2">
-                {questions[quizStep % 2].options.map((opt) => (
+                {quizData[quizStep % quizData.length].options.map((opt) => (
                   <button 
                     key={opt}
-                    onClick={() => opt === questions[quizStep % 2].correct ? setQuizStep(prev => prev + 1) : alert("Incorrect! Review the video for the answer.")}
-                    className={`w-full text-left p-3 rounded-xl border text-sm transition-all ${quizStep >= 2 && opt === questions[1].correct ? 'border-waste-500 bg-waste-500/10 text-waste-500' : 'border-dark-700 bg-dark-900 text-gray-400 hover:border-gray-500'}`}
+                    onClick={() => opt === quizData[quizStep % quizData.length].correct ? setQuizStep(prev => prev + 1) : alert("Incorrect! Review the video.")}
+                    className={`w-full text-left p-3 rounded-xl border text-sm transition-all ${quizStep >= quizData.length && opt === quizData[quizData.length - 1].correct ? 'border-waste-500 bg-waste-500/10 text-waste-500' : 'border-dark-700 bg-dark-900 text-gray-400 hover:border-gray-500'}`}
                   >
                     {opt}
                   </button>
@@ -92,10 +82,10 @@ const ModuleCard = ({ title, desc, videoUrl, reward, level, duration }) => {
 
             <button 
               onClick={handleClaim} 
-              disabled={quizStep < 2} 
-              className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg transition-all ${quizStep >= 2 ? 'bg-waste-500 text-dark-900 scale-100' : 'bg-dark-700 text-gray-500 scale-95 opacity-50 cursor-not-allowed'}`}
+              disabled={quizStep < quizData.length} 
+              className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg transition-all ${quizStep >= quizData.length ? 'bg-waste-500 text-dark-900 scale-100' : 'bg-dark-700 text-gray-500 scale-95 opacity-50 cursor-not-allowed'}`}
             >
-              {quizStep >= 2 ? "Claim My Tokens" : `Answer ${2 - quizStep} more to unlock tokens`}
+              {quizStep >= quizData.length ? "Claim My Tokens" : `Answer ${quizData.length - quizStep} more to unlock tokens`}
             </button>
           </div>
         </div>

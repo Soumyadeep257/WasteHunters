@@ -7,6 +7,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -42,8 +43,28 @@ class DBLesson(Base):
     __tablename__ = "lessons"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
+    category = Column(String) 
     content_summary = Column(String)
     video_url = Column(String) 
+    quiz_data = Column(String) 
+
+class DBCampaign(Base):
+    __tablename__ = "campaigns"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    location = Column(String)
+    date = Column(String)
+    volunteers = Column(Integer, default=0)
+    max_volunteers = Column(Integer)
+    creator = Column(String)
+
+# NEW: Pydantic model for receiving new campaigns from the frontend
+class CampaignCreate(BaseModel):
+    title: str
+    location: str
+    date: str
+    max_volunteers: int
+    creator: str = "GreenHacker" # Defaulting to the logged-in user for the demo
 
 Base.metadata.create_all(bind=engine)
 
@@ -65,27 +86,50 @@ def startup_event():
         test_user = DBUser(id="user_123", username="GreenHacker", green_tokens=150, total_recycling_events=4)
         db.add(test_user)
     
-    # Seed Lessons with VERIFIED Embed URLs
+    # Seed Diverse Lessons
     if not db.query(DBLesson).first():
         lessons = [
             DBLesson(
-                title="The Hidden Dangers of E-Waste", 
-                content_summary="Why mercury and lead are dangerous to soil.",
-                video_url="https://www.youtube.com/embed/nvNbDV1Yu-Q" 
+                title="The 3 R's of Waste", 
+                category="General",
+                content_summary="Learn the basics of Reduce, Reuse, and Recycle.",
+                video_url="https://www.youtube.com/embed/OasbYWF4_S8",
+                quiz_data=json.dumps([
+                    {"q": "What does the first 'R' stand for?", "options": ["Recycle", "Reduce", "Rebound"], "correct": "Reduce"},
+                    {"q": "Instead of throwing away a carton box, you should...", "options": ["Burn it", "Bury it", "Reuse it creatively"], "correct": "Reuse it creatively"}
+                ])
+            ),
+            DBLesson(
+                title="The Story of Plastic", 
+                category="Plastic",
+                content_summary="Understand the lifecycle of plastic and its environmental impact.",
+                video_url="https://www.youtube.com/embed/iO3SA4YyEYU",
+                quiz_data=json.dumps([
+                    {"q": "What are plastics primarily made from?", "options": ["Trees", "Fossil Fuels", "Ocean water"], "correct": "Fossil Fuels"},
+                    {"q": "What happens to most recycled plastic?", "options": ["It becomes a new bottle", "It is downcycled into something worse", "It disappears"], "correct": "It is downcycled into something worse"}
+                ])
             ),
             DBLesson(
                 title="Safe Battery Disposal", 
+                category="E-Waste",
                 content_summary="How to tape terminals to prevent fires.",
-                # REPLACED broken link with verified embeddable link
-                video_url="https://www.youtube.com/embed/aLzk1zsRQCU" 
-            ),
-            DBLesson(
-                title="Monitor Management", 
-                content_summary="Handling CRT and LED screens properly.",
-                video_url="https://www.youtube.com/embed/zweHhVUdjjw" 
+                video_url="https://www.youtube.com/embed/aLzk1zsRQCU",
+                quiz_data=json.dumps([
+                    {"q": "Why should you tape battery terminals?", "options": ["To make them look nice", "To prevent sparks and fires", "To hold a charge"], "correct": "To prevent sparks and fires"},
+                    {"q": "Which type of tape is recommended?", "options": ["Wet tape", "Clear sticky tape", "Paper tape"], "correct": "Clear sticky tape"}
+                ])
             )
         ]
         db.add_all(lessons)
+
+    # Seed Campaigns
+    if not db.query(DBCampaign).first():
+        campaigns = [
+            DBCampaign(title="Sector V Tech-Cleanup", location="Salt Lake, Sector V", date="2026-03-05", volunteers=12, max_volunteers=20, creator="Rahul S."),
+            DBCampaign(title="New Town Battery Drive", location="Action Area I, New Town", date="2026-03-12", volunteers=45, max_volunteers=50, creator="Priya K."),
+            DBCampaign(title="Eco Park E-Waste Awareness", location="Eco Park Main Gate", date="2026-03-20", volunteers=8, max_volunteers=15, creator="Aditya Roy")
+        ]
+        db.add_all(campaigns)
         
     db.commit()
     db.close()
@@ -101,8 +145,10 @@ async def get_lessons(db: Session = Depends(get_db)):
         {
             "id": lesson.id,
             "title": lesson.title,
+            "category": lesson.category,
             "content_summary": lesson.content_summary,
-            "video_url": lesson.video_url
+            "video_url": lesson.video_url,
+            "quiz_data": json.loads(lesson.quiz_data)
         } for lesson in lessons
     ]
 
@@ -133,11 +179,77 @@ def get_active_centers():
 @app.post("/api/classify")
 async def classify_ewaste(file: UploadFile = File(...)):
     image_bytes = await file.read()
-    prompt = "Analyze this image. If e-waste, return JSON: {'item': 'name', 'hazards': 'list', 'tokens': 50}."
+    prompt = """
+    Analyze the uploaded image and identify the type of waste shown.
+    1. Categorize it into one of these: Plastic, Paper, Metal, Glass, Organic, E-Waste, or Hazardous.
+    2. Provide a short 'disposal_guide'.
+    3. Return ONLY a JSON object in this format:
+    {"item": "name", "category": "category name", "hazards": "list", "is_recyclable": true/false, "disposal_guide": "how to dispose", "tokens": 50}
+    """
     
-    # Hunter tool using the specified gemini-3-flash-preview model
     response = client.models.generate_content(
         model="gemini-3-flash-preview", 
         contents=[prompt, types.Part.from_bytes(data=image_bytes, mime_type=file.content_type)]
     )
     return {"status": "success", "classification": response.text}
+
+@app.get("/api/campaigns")
+async def get_campaigns(db: Session = Depends(get_db)):
+    campaigns = db.query(DBCampaign).all()
+    return [
+        {
+            "id": camp.id,
+            "title": camp.title,
+            "location": camp.location,
+            "date": camp.date,
+            "volunteers": camp.volunteers,
+            "max_volunteers": camp.max_volunteers,
+            "creator": camp.creator
+        } for camp in campaigns
+    ]
+
+@app.post("/api/campaigns/{campaign_id}/join")
+async def join_campaign(campaign_id: int, db: Session = Depends(get_db)):
+    campaign = db.query(DBCampaign).filter(DBCampaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    if campaign.volunteers >= campaign.max_volunteers:
+        raise HTTPException(status_code=400, detail="Campaign is full")
+        
+    campaign.volunteers += 1
+    db.commit()
+    
+    return {"status": "success", "volunteers": campaign.volunteers}
+
+# NEW: Endpoint to create a campaign
+@app.post("/api/campaigns")
+async def create_campaign(campaign: CampaignCreate, db: Session = Depends(get_db)):
+    new_campaign = DBCampaign(
+        title=campaign.title,
+        location=campaign.location,
+        date=campaign.date,
+        max_volunteers=campaign.max_volunteers,
+        creator=campaign.creator,
+        volunteers=0
+    )
+    db.add(new_campaign)
+    db.commit()
+    db.refresh(new_campaign)
+    
+    return {"status": "success", "id": new_campaign.id}
+
+@app.post("/api/redeem-tokens")
+async def redeem_tokens(payload: dict, db: Session = Depends(get_db)):
+    user = db.query(DBUser).filter(DBUser.id == "user_123").first()
+    cost = payload.get("cost", 0)
+    
+    # Check if user has enough tokens
+    if user.green_tokens < cost:
+        raise HTTPException(status_code=400, detail="Insufficient tokens")
+        
+    # Deduct the cost and save
+    user.green_tokens -= cost
+    db.commit()
+    
+    return {"status": "success", "new_balance": user.green_tokens}

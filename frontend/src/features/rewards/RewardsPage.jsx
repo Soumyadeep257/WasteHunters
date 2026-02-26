@@ -1,7 +1,6 @@
-import React from 'react';
-import RewardCard from './components/RewardCard';
-import { Sparkles } from 'lucide-react';
-
+import React, { useState, useEffect } from 'react';
+import RewardCard from './components/RewardCard'; 
+import { Sparkles, Loader2 } from 'lucide-react';
 
 const rewards = [
   { 
@@ -10,7 +9,7 @@ const rewards = [
     title: 'Amazon Pay ₹500', 
     desc: 'Redeem for eco-friendly products on Amazon India.', 
     cost: 500, 
-    color: 'bg-gradient-to-br from-orange-500 to-yellow-600' // Amazon colors
+    color: 'bg-gradient-to-br from-orange-500 to-yellow-600' 
   },
   { 
     id: 2, 
@@ -31,6 +30,39 @@ const rewards = [
 ];
 
 const RewardsPage = () => {
+  const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  
+  // NEW: State to track which tab is clicked
+  const [activeTab, setActiveTab] = useState('All Rewards');
+
+  const fetchBalance = async () => {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/user-stats');
+      if (res.ok) {
+        const data = await res.json();
+        setBalance(data.tokens);
+      }
+    } catch (error) {
+      console.error("Failed to fetch stats", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBalance();
+  }, []);
+
+  // NEW: Logic to filter rewards based on the active tab
+  const filteredRewards = rewards.filter(reward => {
+    if (activeTab === 'All Rewards') return true;
+    if (activeTab === 'Vouchers') return reward.type === 'Voucher';
+    if (activeTab === 'Gadgets') return reward.type === 'Gadget';
+    if (activeTab === 'Merch') return reward.type === 'Merch';
+    return false;
+  });
+
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
         
@@ -42,17 +74,25 @@ const RewardsPage = () => {
                 You've earned these tokens by keeping India clean. Spend them on vouchers and gadgets.
             </p>
         </div>
-        <div className="bg-dark-900/20 backdrop-blur-sm p-6 rounded-2xl text-center border border-dark-900/10 min-w-50">
+        <div className="bg-dark-900/20 backdrop-blur-sm p-6 rounded-2xl text-center border border-dark-900/10 min-w-[150px]">
             <span className="text-dark-900 text-xs font-bold uppercase tracking-wider">Current Balance</span>
-            <div className="text-4xl font-bold text-white mt-1">1,250</div>
+            <div className="text-4xl font-bold text-white mt-1">
+              {loading ? <Loader2 className="animate-spin w-8 h-8 mx-auto text-white" /> : balance.toLocaleString()}
+            </div>
             <span className="text-xs font-bold text-dark-900 bg-white/30 px-2 py-0.5 rounded-full mt-2 inline-block">TOKENS</span>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-4 border-b border-dark-700 pb-4 overflow-x-auto">
-        {['All Rewards', 'Vouchers', 'Gadgets', 'Merch'].map((tab, i) => (
-            <button key={tab} className={`text-sm font-bold pb-2 px-2 whitespace-nowrap ${i === 0 ? 'text-waste-500 border-b-2 border-waste-500' : 'text-gray-400 hover:text-white'}`}>
+        {['All Rewards', 'Vouchers', 'Gadgets', 'Merch'].map((tab) => (
+            <button 
+              key={tab} 
+              // NEW: Update activeTab state on click
+              onClick={() => setActiveTab(tab)}
+              // NEW: Change styling based on which tab is active
+              className={`text-sm font-bold pb-2 px-2 whitespace-nowrap transition-colors ${activeTab === tab ? 'text-waste-500 border-b-2 border-waste-500' : 'text-gray-400 hover:text-white'}`}
+            >
                 {tab}
             </button>
         ))}
@@ -60,8 +100,14 @@ const RewardsPage = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {rewards.map(reward => (
-            <RewardCard key={reward.id} {...reward} />
+        {/* NEW: Map over the filtered list instead of all rewards */}
+        {filteredRewards.map(reward => (
+            <RewardCard 
+              key={reward.id} 
+              {...reward} 
+              currentBalance={balance} 
+              onRedeemSuccess={fetchBalance}
+            />
         ))}
         {/* Placeholder */}
         <div className="bg-dark-800/50 rounded-2xl border border-dashed border-dark-700 flex flex-col items-center justify-center p-8 text-center group hover:border-waste-500/50 transition-colors">

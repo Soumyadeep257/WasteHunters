@@ -6,7 +6,6 @@ const EducationPage = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Masterclass Modal States
   const [showMasterclass, setShowMasterclass] = useState(false);
   const [masterclassQuizStep, setMasterclassQuizStep] = useState(0);
   const [masterclassCompleted, setMasterclassCompleted] = useState(false);
@@ -50,7 +49,6 @@ const EducationPage = () => {
             {masterclassCompleted ? 'Masterclass Completed' : 'Start Masterclass (+500 Tokens)'}
           </button>
         </div>
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-waste-500/10 to-transparent pointer-events-none"></div>
       </div>
 
       {/* MASTERCLASS MODAL */}
@@ -64,7 +62,6 @@ const EducationPage = () => {
 
             <div className="p-8 overflow-y-auto space-y-8">
               <div className="aspect-video rounded-2xl overflow-hidden border-4 border-dark-700 shadow-2xl bg-black">
-                {/* Masterclass Video with Verified Embed Link */}
                 <iframe 
                   width="100%" 
                   height="100%" 
@@ -110,8 +107,10 @@ const EducationPage = () => {
             <ModuleCard 
               key={lesson.id}
               title={lesson.title} 
+              category={lesson.category}
               desc={lesson.content_summary} 
               videoUrl={lesson.video_url} 
+              quizData={lesson.quiz_data}
               reward="50"
               level={lesson.id % 2 === 0 ? "Intermediate" : "Beginner"}
               duration="10 mins"

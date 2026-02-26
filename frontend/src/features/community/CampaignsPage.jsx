@@ -1,19 +1,97 @@
-import React, { useState } from 'react';
-import CampaignCard from './components/CampaignCard';
-import { Plus, Search, Megaphone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import CampaignCard from './components/CampaignCard'; // Make sure this path is correct!
+import { Plus, Search, Megaphone, Loader2, X } from 'lucide-react';
 
 const CampaignsPage = () => {
   const [activeTab, setActiveTab] = useState('Explore');
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // NEW: Track joined campaigns using LocalStorage
+  const [joinedIds, setJoinedIds] = useState([]);
+  
+  // Modal State
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    location: '',
+    date: '',
+    max_volunteers: 20
+  });
 
-  const campaigns = [
-    { id: 1, title: "Sector V Tech-Cleanup", location: "Salt Lake, Sector V", date: "March 5, 2026", volunteers: 12, maxVolunteers: 20, creator: "Rahul S." },
-    { id: 2, title: "New Town Battery Drive", location: "Action Area I, New Town", date: "March 12, 2026", volunteers: 45, maxVolunteers: 50, creator: "Priya K." },
-    { id: 3, title: "Eco Park E-Waste Awareness", location: "Eco Park Main Gate", date: "March 20, 2026", volunteers: 8, maxVolunteers: 15, creator: "Aditya Roy" },
-  ];
+  const CURRENT_USER = "GreenHacker"; // Simulating logged-in user
+
+  useEffect(() => {
+    fetchCampaigns();
+    // NEW: Load saved joins from the browser memory when the page loads
+    const savedJoins = JSON.parse(localStorage.getItem('wastehunters_joined') || '[]');
+    setJoinedIds(savedJoins);
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/campaigns');
+      if (res.ok) {
+        const data = await res.json();
+        setCampaigns(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch campaigns", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateCampaign = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/campaigns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          max_volunteers: parseInt(formData.max_volunteers),
+          creator: CURRENT_USER
+        }),
+      });
+      
+      if (res.ok) {
+        setShowCreateModal(false);
+        setFormData({ title: '', location: '', date: '', max_volunteers: 20 });
+        fetchCampaigns(); 
+        setActiveTab('My Campaigns'); 
+      }
+    } catch (error) {
+      console.error("Failed to create campaign", error);
+    }
+  };
+
+  // NEW: Handle when a user joins a campaign to save it permanently
+  const handleJoinCampaign = (campaignId) => {
+    const updatedJoins = [...joinedIds, campaignId];
+    setJoinedIds(updatedJoins);
+    localStorage.setItem('wastehunters_joined', JSON.stringify(updatedJoins));
+    fetchCampaigns(); // Refresh the progress bars
+  };
+
+  // FIXED: Filter Logic
+  const filteredCampaigns = campaigns.filter(camp => {
+    const matchesSearch = camp.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          camp.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (!matchesSearch) return false;
+    if (activeTab === 'My Campaigns') return camp.creator === CURRENT_USER;
+    
+    // FIXED: Only show campaigns whose ID is in our joinedIds array
+    if (activeTab === 'Joined') return joinedIds.includes(camp.id); 
+    
+    return true; // 'Explore' shows all
+  });
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      {/* Header with Create Action */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
@@ -21,7 +99,10 @@ const CampaignsPage = () => {
           </h1>
           <p className="text-gray-400 mt-1">Join forces with other Hunters in Kolkata to clean up our city.</p>
         </div>
-        <button className="bg-waste-500 hover:bg-waste-600 text-dark-900 font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_-5px_#10b981] transition-all">
+        <button 
+          onClick={() => setShowCreateModal(true)}
+          className="bg-waste-500 hover:bg-waste-600 text-dark-900 font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_-5px_#10b981] transition-all"
+        >
           <Plus className="w-5 h-5" /> Start a Campaign
         </button>
       </div>
@@ -43,7 +124,9 @@ const CampaignsPage = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input 
             type="text" 
-            placeholder="Search by area..." 
+            placeholder="Search by area or title..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-dark-800 border border-dark-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-waste-500"
           />
         </div>
@@ -51,10 +134,63 @@ const CampaignsPage = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {campaigns.map(camp => (
-          <CampaignCard key={camp.id} {...camp} />
-        ))}
+        {loading ? (
+          <div className="col-span-full flex justify-center py-20">
+            <Loader2 className="animate-spin text-waste-500 w-10 h-10" />
+          </div>
+        ) : filteredCampaigns.length === 0 ? (
+          <div className="col-span-full text-center py-20 text-gray-500">
+            No campaigns found. Why not start one?
+          </div>
+        ) : (
+          filteredCampaigns.map(camp => (
+            <CampaignCard 
+              key={camp.id} 
+              {...camp} 
+              // NEW: Pass down the joined status and join function
+              isAlreadyJoined={joinedIds.includes(camp.id)}
+              onJoin={() => handleJoinCampaign(camp.id)} 
+            />
+          ))
+        )}
       </div>
+
+      {/* CREATE MODAL */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in zoom-in-95">
+          <div className="bg-dark-900 border border-dark-700 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-dark-700 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white">Start New Campaign</h2>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-500 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateCampaign} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Campaign Title</label>
+                <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-waste-500" placeholder="e.g., Dumdum Park Cleanup" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Location</label>
+                <input required type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-waste-500" placeholder="e.g., VIP Road" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Date</label>
+                  <input required type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-waste-500 style-color-scheme-dark" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Volunteers Needed</label>
+                  <input required type="number" min="5" max="500" value={formData.max_volunteers} onChange={e => setFormData({...formData, max_volunteers: e.target.value})} className="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-waste-500" />
+                </div>
+              </div>
+              <button type="submit" className="w-full bg-waste-500 hover:bg-waste-600 text-dark-900 font-bold py-4 rounded-xl mt-4 transition-all">
+                Publish Campaign
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

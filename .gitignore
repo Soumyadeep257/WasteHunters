@@ -1,37 +1,14 @@
-<<<<<<< HEAD
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-=======
-# Ignore Backend Secrets & Database
-backend/.env
-backend/wastehunters.db
-backend/__pycache__/
-backend/venv/
-
-# Ignore Frontend Dependencies
+# Node & Frontend
 frontend/node_modules/
 frontend/dist/
-frontend/.env
->>>>>>> d9a64da (Final Secure Update: Moved gitignore to root and updated Gemini models)
+.DS_Store
+
+# Python & Backend
+backend/venv/
+backend/__pycache__/
+*.pyc
+
+# Database & Secrets
+backend/wastehunters.db
+backend/.env
+.env

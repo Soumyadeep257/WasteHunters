@@ -1,3 +1,4 @@
+import SettingsPage from './features/settings/SettingsPage';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/layout/Sidebar';
@@ -30,7 +31,8 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/community" element={<CampaignsPage />} />
               
-              <Route path="/settings" element={<div className="p-8">Settings Page Coming Soon</div>} />
+              {/* Change it to this: */}
+<Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </main>
         </div>
